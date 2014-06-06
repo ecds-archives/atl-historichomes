@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <title>Historic Peachtree</title>
+    <meta charset="utf-8" />
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <link rel="stylesheet" href="css/leaflet.css" />
+      <!--[if lte IE 8]><link rel="stylesheet" href="css/leaflet.ie.css" /><![endif]-->
+      <link rel="stylesheet" href="css/local.css" />
+      <script src="js/jquery.js"></script>
+      <script src="js/leaflet.js"></script>
+      <script src="js/leaflet.ajax.min.js"></script>
+  </head>
+  <body>
+    <div id="map" style="width: 1000px; height: 800px"></div>
+    <div id="legend"></div>
+    
+    <script>
+      
+      var map = L.map('map').setView([33.821193, -84.36058], 10);
+      
+      L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a>'
+      }).addTo(map);
+      
+      function popUp(feature, layer) {
+        layer.bindPopup(
+          feature.properties.Address +
+          '<br>'
+        );
+      }
+
+      //var historicHomes = new L.GeoJSON.AJAX("http://ec2-54-82-200-12.compute-1.amazonaws.com/DigitalAtlanta/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=DigitalAtlanta:ATL_Hist_Homes&maxFeatures=50&outputFormat=text/javascript&format_options=callback:getJSONP", {
+      //  pointToLayer: function (feature, latlng) {
+      //    return L.marker(latlng, {});
+      //  },
+      //  onEachFeature: popUp
+      //});
+      
+      var rootUrl = 'http://ec2-54-82-200-12.compute-1.amazonaws.com/DigitalAtlanta/ows';
+
+      var defaultParameters = {
+          service: 'WFS',
+          version: '1.0.0',
+          request: 'GetFeature',
+          typeName: 'DigitalAtlanta:ATL_Hist_Homes',
+          maxFeatures: 200,
+          outputFormat: 'text/javascript',
+          format_options: 'callback: getJson'
+      
+      };
+      
+      var parameters = L.Util.extend(defaultParameters);
+      
+      $.ajax({
+          url: rootUrl + L.Util.getParamString(parameters),
+          dataType: 'jsonp',
+          jsonpCallback: 'getJson',
+          success: handleJson
+      });
+      
+      
+      function handleJson(data) {
+          L.geoJson(data, {
+              onEachFeature: popUp,
+              //pointToLayer: function (feature, latlng) {
+              //    return L.circleMarker(latlng, geojsonMarkerOptions);
+                  //return L.marker(latlng);
+              //}
+          }).addTo(map);
+}
+    
+      //var map = L.map('map', {
+      //  center: [33.821193, -84.36058],
+      //  zoom: 10,
+      //  layers: [mapTiles]//, historicHomes]
+      //});
+
+      
+    </script>
+  </body>
+</html>
