@@ -18,65 +18,61 @@
     
     <script>
       
-      var map = L.map('map').setView([33.821193, -84.36058], 10);
-      
-      L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      var mapTiles = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a>'
-      }).addTo(map);
+      });
       
       function popUp(feature, layer) {
         layer.bindPopup(
-          feature.properties.Address +
-          '<br>'
+          feature.properties.Address
         );
       }
 
-      //var historicHomes = new L.GeoJSON.AJAX("http://ec2-54-82-200-12.compute-1.amazonaws.com/DigitalAtlanta/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=DigitalAtlanta:ATL_Hist_Homes&maxFeatures=50&outputFormat=text/javascript&format_options=callback:getJSONP", {
-      //  pointToLayer: function (feature, latlng) {
-      //    return L.marker(latlng, {});
-      //  },
-      //  onEachFeature: popUp
-      //});
-      
-      var rootUrl = 'http://ec2-54-82-200-12.compute-1.amazonaws.com/DigitalAtlanta/ows';
-
-      var defaultParameters = {
-          service: 'WFS',
-          version: '1.0.0',
-          request: 'GetFeature',
-          typeName: 'DigitalAtlanta:ATL_Hist_Homes',
-          maxFeatures: 200,
-          outputFormat: 'text/javascript',
-          format_options: 'callback: getJson'
-      
-      };
-      
-      var parameters = L.Util.extend(defaultParameters);
-      
-      $.ajax({
-          url: rootUrl + L.Util.getParamString(parameters),
-          dataType: 'jsonp',
-          jsonpCallback: 'getJson',
-          success: handleJson
+      var historicHomes = new L.GeoJSON.AJAX("http://ec2-54-82-200-12.compute-1.amazonaws.com/DigitalAtlanta/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=DigitalAtlanta:ATL_Hist_Homes&maxFeatures=50&outputFormat=text/javascript&format_options=callback:getJSONP", {
+        pointToLayer: function (feature, latlng) {
+          return L.marker(latlng, {});
+        },
+        onEachFeature: popUp
       });
       
-      
-      function handleJson(data) {
-          L.geoJson(data, {
-              onEachFeature: popUp,
-              //pointToLayer: function (feature, latlng) {
-              //    return L.circleMarker(latlng, geojsonMarkerOptions);
-                  //return L.marker(latlng);
-              //}
-          }).addTo(map);
-}
+//      var rootUrl = 'http://ec2-54-82-200-12.compute-1.amazonaws.com/DigitalAtlanta/ows';
+//
+//      var defaultParameters = {
+//          service: 'WFS',
+//          version: '1.0.0',
+//          request: 'GetFeature',
+//          typeName: 'DigitalAtlanta:ATL_Hist_Homes',
+//          maxFeatures: 200,
+//          outputFormat: 'text/javascript',
+//          format_options: 'callback: getJson'
+//      
+//      };
+//      
+//      var parameters = L.Util.extend(defaultParameters);
+//      
+//      $.ajax({
+//          url: rootUrl + L.Util.getParamString(parameters),
+//          dataType: 'jsonp',
+//          jsonpCallback: 'getJson',
+//          success: handleJson
+//      });
+//      
+//      
+//      function handleJson(data) {
+//          L.geoJson(data, {
+//              onEachFeature: popUp,
+//              pointToLayer: function (feature, latlng) {
+//                 return L.marker(latlng, {});
+//              }
+//          }).addTo(map);
+//}
     
-      //var map = L.map('map', {
-      //  center: [33.821193, -84.36058],
-      //  zoom: 10,
-      //  layers: [mapTiles]//, historicHomes]
-      //});
+      var map = L.map('map', {
+        center: [33.821193, -84.36058],
+        zoom: 10,
+        layers: [mapTiles, historicHomes]
+      });
 
       
     </script>
